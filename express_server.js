@@ -66,6 +66,24 @@ app.post("/urls", (req, res) => {
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
+//route handler for POST requests to /url
+app.post("/urls", (req, res) => {
+  try {
+  //get id-longURL key + values
+  const id = generateRandomString()
+  const longURL = req.body.longURL;
+
+  //store the key + value in the urlDatabase
+  urlDatabase[id] = longURL;
+//redirect users to /urls/:id
+  res.redirect('/urls/${:id}')
+  }
+  catch (error) {
+    console.log(error.message)
+    res.status(500).send('Server error')
+  }
+})
+
 //Route handler to handle shortURL requests
 app.get("/u/:id", (req, res) => {
   try {
