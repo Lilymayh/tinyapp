@@ -17,14 +17,7 @@
     <title>TinyApp</title>
   </head>
 
-   <!-- add a form element for each shortened URL -->
-   <form method="POST" action="/urls/9sm5xK/delete">...</form>
-   
-
-
   <body>
-       <!-- add a form element for each shortened URL -->
-    <form method="POST" action="/urls/9sm5xK/delete">...</form>
     <%- include('../partials/_header')%>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
@@ -35,12 +28,19 @@
             <th scope="col">Long URL</th>
             <td>
               <!-- add delete buttons -->
-              <form method="POST" action="/urls/<%= id %>/delete">
-                <button type="submit">Delete</button>
-              </form>
+
             </td>
         </thead>
         <tbody>
+          <% for (let id in urls) { %>
+            <tr>
+              <td><%= id %></td>
+              <td><%= urls[id] %></td>
+              <td>
+                <form method="POST" action="/urls/<%= id %>/delete">
+                  <button type="submit">Delete</button>
+                </form>
+              </td>
             </tr>
           <% } %>
         </tbody>

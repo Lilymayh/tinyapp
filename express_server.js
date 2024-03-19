@@ -71,7 +71,7 @@ app.post("/urls", (req, res) => {
   //store the key + value in the urlDatabase
   urlDatabase[id] = longURL;
 //redirect users to /urls/:id
-  res.redirect('/urls/ + id')
+  res.redirect(`/urls/${id}`)
   }
   catch (error) {
     console.log(error.message)
@@ -92,3 +92,10 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+//adding a post route that removes url resource: '/urls/:id/delete'
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id
+  delete urlDatabase[id]
+  //redirect client to /urls
+  res.redirect('/urls')
+})
