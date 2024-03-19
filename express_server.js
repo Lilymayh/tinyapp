@@ -5,6 +5,12 @@ const PORT = 8080;
 app.set("view engine", "ejs");
 //middleware to parse
 app.use(express.urlencoded({ extended: true }));
+//middleware for errors
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  //send status code telling us to get Bob the Builder on it!
+  res.status(500).send("WARNING\nsomething's broken")
+})
 
 const generateRandomString = function() {
 //variable to store randomly generated string
@@ -62,6 +68,7 @@ app.post("/urls", (req, res) => {
 
 //route handler for POST requests to /url
 app.post("/urls", (req, res) => {
+  try {
   //get id-longURL key + values
   const id = generateRandomString()
   const longURL = req.body.longURL;
@@ -70,13 +77,23 @@ app.post("/urls", (req, res) => {
   urlDatabase[id] = longURL;
 //redirect users to /urls/:id
   res.redirect('/urls/${:id}')
+  }
+  catch (error) {
+    console.log(error.message)
+    res.status(500).send('Server error')
+  }
 })
 
 //Route handler to handle shortURL requests
 app.get("/u/:id", (req, res) => {
+  try {
   //request end point "/u/:id"
   const longURL = urlDatabase[req.params.id]
   //redirect to its longURL
   res.redirect(longURL);
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).send('Server error')
+  }
 });
 
