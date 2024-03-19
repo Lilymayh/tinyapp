@@ -72,3 +72,11 @@ app.post("/urls", (req, res) => {
   res.redirect('/urls/${:id}')
 })
 
+//Route handler to handle shortURL requests
+app.get("/u/:id", (req, res) => {
+  //request end point "/u/:id"
+  const longURL = urlDatabase[req.params.id]
+  //redirect to its longURL
+  res.redirect(longURL);
+});
+
