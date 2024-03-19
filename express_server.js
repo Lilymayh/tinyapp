@@ -61,11 +61,6 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
-});
-
 //route handler for POST requests to /url
 app.post("/urls", (req, res) => {
   try {
@@ -76,7 +71,7 @@ app.post("/urls", (req, res) => {
   //store the key + value in the urlDatabase
   urlDatabase[id] = longURL;
 //redirect users to /urls/:id
-  res.redirect('/urls/${:id}')
+  res.redirect('/urls/ + id')
   }
   catch (error) {
     console.log(error.message)
