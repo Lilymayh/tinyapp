@@ -3,8 +3,22 @@ const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
-
+//middleware to parse
 app.use(express.urlencoded({ extended: true }));
+
+const generateRandomString = function() {
+//variable to store randomly generated string
+  let newStr = '';
+  //store alphabet + numbers 1-9 to loop over/use method
+  const alphaNum = 'abcdefghijklmnopqrstuvwxyz123456789'
+  //loop over alphaNum 6 times to generate 6 different letters/nums
+  for (let i = 0; i < 6; i++) {
+  const randomStr = (Math.floor(Math.random() * alphaNum.length))
+  newStr += alphaNum[randomStr]
+  }
+//OUTPUT: a string of 6 random alpha-numeric charachters
+  return newStr;
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -39,5 +53,10 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
