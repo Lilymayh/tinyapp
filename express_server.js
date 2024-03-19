@@ -60,3 +60,15 @@ app.post("/urls", (req, res) => {
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
+//route handler for POST requests to /url
+app.post("/urls", (req, res) => {
+  //get id-longURL key + values
+  const id = generateRandomString()
+  const longURL = req.body.longURL;
+
+  //store the key + value in the urlDatabase
+  urlDatabase[id] = longURL;
+//redirect users to /urls/:id
+  res.redirect('/urls/${:id}')
+})
+
