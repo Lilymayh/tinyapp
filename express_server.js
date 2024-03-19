@@ -76,7 +76,7 @@ app.post("/urls", (req, res) => {
   //store the key + value in the urlDatabase
   urlDatabase[id] = longURL;
 //redirect users to /urls/:id
-  res.redirect('/urls/${:id}')
+  res.redirect(`/urls/${id}`)
   }
   catch (error) {
     console.log(error.message)
