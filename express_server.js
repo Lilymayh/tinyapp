@@ -73,7 +73,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 //route handler for POST requests to /url
-app.post("/urls", (req, res) => {
+app.post("/urls", (req, res) => {    
     //get id-longURL key + values
    try {
     const id = generateRandomString();
@@ -146,6 +146,14 @@ app.get("/urls/index", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+
+//implement route to logout
+app.post("/logout", (req, res) => {
+  //clear cookies
+  res.clearCookie("username")
+  //redirect to /urls
+  res.redirect("/urls")
+})
 
 
 
