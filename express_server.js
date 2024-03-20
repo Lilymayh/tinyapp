@@ -140,9 +140,8 @@ app.post("/login", (req, res) => {
 })
 
 app.get("/urls/index", (req, res) => {
-  console.log("Username from cookies:", req.cookies["username"]);
   const templateVars = {
-    username: req.cookies["username"]
+  username: req.cookies["username"]
   };
   res.render("urls_index", templateVars);
 });
@@ -153,6 +152,11 @@ app.post("/logout", (req, res) => {
   res.clearCookie("username")
   //redirect to /urls
   res.redirect("/urls")
+})
+
+app.get("/register", (req, res) => {
+
+  res.render("register")
 })
 
 
