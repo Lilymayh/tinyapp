@@ -1,10 +1,13 @@
 const express = require("express");
+const cookieParser = require("cookie-parser")
 const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
 //middleware to parse
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser())
 //middleware for errors
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -48,23 +51,31 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username: req.cookies["username"],
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { 
+    username: req.cookies["username"], 
+    id: req.params.id, 
+    longURL: urlDatabase[req.params.id] 
+  };
   res.render("urls_show", templateVars);
 });
 
 //route handler for POST requests to /url
 app.post("/urls", (req, res) => {
-  try {
     //get id-longURL key + values
+   try {
     const id = generateRandomString();
     const longURL = req.body.longURL;
 
@@ -121,11 +132,21 @@ app.post("/urls/:id/edit", (req, res) => {
 
 //post route for /login to express_server.js
 app.post("/login", (req, res) => {
-  const { username } = req.body
+  const { username } = req.body;
 
-  res.cookie("username", username)
+  res.cookie("username", username);
   //redirect the client back to the url
-  res.redirect('/urls')
+  res.redirect('/urls');
 })
+
+app.get("/urls/index", (req, res) => {
+  console.log("Username from cookies:", req.cookies["username"]);
+  const templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("urls_index", templateVars);
+});
+
+
 
 

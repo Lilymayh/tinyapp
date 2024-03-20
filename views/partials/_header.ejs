@@ -6,6 +6,9 @@
     </form>
     <a class="navbar-brand" href="/urls">TinyApp</a>
 
+    <% if (username) { %>
+    <span class="navbar-text">Logged in as <%= username %></span> 
+    <% } %>
     <button
       class="navbar-toggler"
       type="button"
