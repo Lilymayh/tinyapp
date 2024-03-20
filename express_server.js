@@ -121,7 +121,7 @@ app.post("/urls/:id/edit", (req, res) => {
 
 //post route for /login to express_server.js
 app.post("/login", (req, res) => {
-  const username = req.body.username
+  const { username } = req.body
 
   res.cookie("username", username)
   //redirect the client back to the url
