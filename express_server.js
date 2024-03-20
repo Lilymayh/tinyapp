@@ -101,14 +101,14 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 //get route to get the edit form for a specific url
-app.get("/urls/:id/editor", (req, res) => {
+app.get("/urls/:id/edit", (req, res) => {
   const id = req.params.id
   const longUrl = urlDatabase[id]
 
   res.render("edit_form", {id: id, longUrl: longUrl})
 })
 
-//new post route to update the value of the stored long URL based on the new value in req.body
+//new post route to update the value of the stored long URL based on the new value in req.body.Url
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id
   const newLongUrl = req.body.Url
@@ -117,4 +117,15 @@ app.post("/urls/:id/edit", (req, res) => {
   //redirect the client back to urls
   res.redirect('/urls')
 })
+
+
+//post route for /login to express_server.js
+app.post("/login", (req, res) => {
+  const username = req.body.username
+
+  res.cookie("username", username)
+  //redirect the client back to the url
+  res.redirect('/urls')
+})
+
 
