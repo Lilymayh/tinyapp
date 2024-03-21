@@ -167,10 +167,10 @@ app.post("/login", (req, res) => {
       res.cookie("user_id", user.id);
       return res.redirect('/urls');
     }
-    return res.status(401).send("Error: incorrect password")
+    return res.status(403).send("Error: incorrect password")
   }
 
-  return res.status(401).send("Error: no user found with those credentials")
+  return res.status(403).send("Error: no user found with those credentials")
   //redirect the client back to the url
 })
 
@@ -189,7 +189,7 @@ app.post("/logout", (req, res) => {
   //clear cookies
   res.clearCookie("user_id");
   //redirect to /urls
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 //get route for user registration
