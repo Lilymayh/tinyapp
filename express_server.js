@@ -29,7 +29,7 @@ const generateRandomString = function() {
   return newStr;
 };
 
-const userLookUp = function () {
+const userLookUp = function (email, res, users) {
 for (let existingUser in users) {
   if (users[existingUser].email === email) {
     res.status(400).send("Error: user already exists");
@@ -190,7 +190,7 @@ app.post("/register", (req, res) => {
   //get email and password & generate a random ID for our new User
   const { email: email, password: password } = req.body;
   let newUserId = generateRandomString();
-  userLookUp()
+  userLookUp(email)
 
   //add the newUser and their id to our users object
   users[newUserId] = {
