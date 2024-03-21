@@ -29,16 +29,17 @@ const generateRandomString = function() {
   return newStr;
 };
 
-const userLookUp = function (email, res, users) {
-for (let existingUser in users) {
-  if (users[existingUser].email === email) {
-    res.status(400).send("Error: user already exists");
-  }
-  if (users[existingUser].email === '' || users[existingUser].password === '') {
-    res.status(400).send("Error: incorrect details provided");
+const userLookUp = function(email, users) {
+  for (let existingUser in users) {
+    if (!users[existingUser].email || !users[existingUser].password) {
+      return true;
     }
+    if (users[existingUser].email === email) {
+      return true;
+    }
+    return false;
   }
-}
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -190,8 +191,16 @@ app.post("/register", (req, res) => {
   //get email and password & generate a random ID for our new User
   const { email: email, password: password } = req.body;
   let newUserId = generateRandomString();
-  userLookUp(email)
 
+  // Check for empty email or password
+  if (!email || !password) {
+    return res.status(400).send("Error: no email or password provided");
+  }
+
+  // Check if the email already exists
+  if (userLookUp(email, users)) {
+    return res.status(400).send("Error: user already exists");
+  }
   //add the newUser and their id to our users object
   users[newUserId] = {
     id: newUserId,
