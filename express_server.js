@@ -1,5 +1,5 @@
 const express = require("express");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 8080;
 
@@ -7,7 +7,7 @@ app.set("view engine", "ejs");
 //middleware to parse
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cookieParser())
+app.use(cookieParser());
 //middleware for errors
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -34,6 +34,15 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//store users in object
+const users = {
+  user1ID: {
+    id: "id",
+    email: "email",
+    password: "password"
+  }
+};
+
 app.get('/', (req, res) => {
   res.send("Hello!");
 });
@@ -51,31 +60,34 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+  const user = users[req.cookies["user_id"]]
+  const templateVars = { urls: urlDatabase, user: user };
 
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
+  const user = users[req.cookies["user_id"]]
   const templateVars = {
-    username: req.cookies["username"],
+    user: user
   }
-  res.render("urls_new", templateVars);
+    res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { 
-    username: req.cookies["username"], 
-    id: req.params.id, 
-    longURL: urlDatabase[req.params.id] 
+  const user = users[req.cookies["user_id"]]
+  const templateVars = {
+    user: user,
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id]
   };
   res.render("urls_show", templateVars);
 });
 
 //route handler for POST requests to /url
-app.post("/urls", (req, res) => {    
-    //get id-longURL key + values
-   try {
+app.post("/urls", (req, res) => {
+  //get id-longURL key + values
+  try {
     const id = generateRandomString();
     const longURL = req.body.longURL;
 
@@ -113,35 +125,38 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //get route to get the edit form for a specific url
 app.get("/urls/:id/edit", (req, res) => {
-  const id = req.params.id
-  const longUrl = urlDatabase[id]
+  const id = req.params.id;
+  const longUrl = urlDatabase[id];
 
-  res.render("edit_form", {id: id, longUrl: longUrl})
-})
+  res.render("edit_form", { id: id, longUrl: longUrl });
+});
 
 //new post route to update the value of the stored long URL based on the new value in req.body.Url
 app.post("/urls/:id/edit", (req, res) => {
-  const id = req.params.id
-  const newLongUrl = req.body.Url
- 
-  urlDatabase[id] = newLongUrl
+  const id = req.params.id;
+  const newLongUrl = req.body.Url;
+
+  urlDatabase[id] = newLongUrl;
   //redirect the client back to urls
-  res.redirect('/urls')
-})
+  res.redirect('/urls');
+});
 
 
 //post route for /login to express_server.js
 app.post("/login", (req, res) => {
-  const { username } = req.body;
+  const { user_id } = req.body;
 
-  res.cookie("username", username);
+  res.cookie("user_id", user_id);
   //redirect the client back to the url
   res.redirect('/urls');
-})
+});
 
 app.get("/urls/index", (req, res) => {
+  const user = users[req.cookies["user_id"]]
+  const email = users[email]
   const templateVars = {
-  username: req.cookies["username"]
+    user: user,
+    email: email
   };
   res.render("urls_index", templateVars);
 });
@@ -149,16 +164,31 @@ app.get("/urls/index", (req, res) => {
 //implement route to logout
 app.post("/logout", (req, res) => {
   //clear cookies
-  res.clearCookie("username")
+  res.clearCookie("user_id");
   //redirect to /urls
-  res.redirect("/urls")
-})
+  res.redirect("/urls");
+});
 
+//get route for user registration
 app.get("/register", (req, res) => {
+  res.render("register");
+});
 
-  res.render("register")
-})
+//post route for user regristration
+app.post("/register", (req, res) => {
+  //get email and password & generate a random ID for our new User
+  const { email: email, password: password } = req.body;
+  let newUserId = generateRandomString();
 
-
-
-
+  //add the newUser and their id to our users object
+  users[newUserId] = {
+    id: newUserId,
+    email: email,
+    password: password
+  }
+  //add cookie for user id
+  res.cookie("user_id", newUserId);
+  console.log(users)
+  res.redirect("/urls");
+  //redirect to /urls
+});
