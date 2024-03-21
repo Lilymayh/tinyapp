@@ -3,15 +3,17 @@
     <a class="navbar-brand" href="/urls">TinyApp</a>
 
   <!-- check if email is present, if yes, display a log out button instead of login. If logged out, display a username field and a login button -->
-    <% if (user) { %>
-    <span class="navbar-text">Logged in as <%= user %></span> 
+    <% if (typeof user !== "undefined") { %>
+    <span class="navbar-text">Logged in as <%= user.email %></span> 
     <form method="POST" action="/logout">
       <button type="submit">Log out</button>
     </form>
     <% } else { %>
-      <form method="POST" action="/login">
-        <input type="text" name="email" placeholder="Enter email" autocomplete="email">
+      <form method="GET" action="/login">
         <button type="submit">Log in</button>
+      </form>
+      <form method="GET" action="/register">
+        <button type="submit">Register</button>
       </form>
     <% } %>
     <button

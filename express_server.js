@@ -31,14 +31,11 @@ const generateRandomString = function() {
 
 const userLookUp = function(email, users) {
   for (let existingUser in users) {
-    if (!users[existingUser].email || !users[existingUser].password) {
-      return true;
-    }
     if (users[existingUser].email === email) {
-      return true;
+      return users[existingUser];
     }
-    return false;
   }
+  return false;
 };
 
 const urlDatabase = {
@@ -49,8 +46,8 @@ const urlDatabase = {
 //store users in object
 const users = {
   user1ID: {
-    id: "id",
-    email: "email",
+    id: "user1ID",
+    email: "email@e.e",
     password: "password"
   }
 };
@@ -154,14 +151,27 @@ app.post("/urls/:id/edit", (req, res) => {
 });
 
 
-//post route for /login to express_server.js
-app.post("/login", (req, res) => {
-  const { user_id } = req.body;
+//added route for post for in register.ejs
+app.get("/login", (req, res) => {  
+  res.render("login")
+})
 
-  res.cookie("user_id", user_id);
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = userLookUp(email, users)
+
+  if (user) {
+    if(user.password === password) {
+      res.cookie("user_id", user.id);
+      return res.redirect('/urls');
+    }
+    return res.status(401).send("Error: incorrect password")
+  }
+
+  return res.status(401).send("Error: no user found with those credentials")
   //redirect the client back to the url
-  res.redirect('/urls');
-});
+})
 
 app.get("/urls/index", (req, res) => {
   const user = users[req.cookies["user_id"]];
