@@ -134,10 +134,11 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //get route to get the edit form for a specific url
 app.get("/urls/:id/edit", (req, res) => {
+  const user = users[req.cookies["user_id"]];
   const id = req.params.id;
   const longUrl = urlDatabase[id];
 
-  res.render("edit_form", { id: id, longUrl: longUrl });
+  res.render("edit_form", { id: id, longUrl: longUrl, user: user });
 });
 
 //new post route to update the value of the stored long URL based on the new value in req.body.Url
