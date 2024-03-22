@@ -49,7 +49,7 @@ const users = {
     id: "user1ID",
     email: "email@e.e",
     password: "password"
-  }
+  },
 };
 
 app.get('/', (req, res) => {
@@ -77,6 +77,10 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies["user_id"]];
+  if (!req.cookies["user_id"]) {
+    res.send("<h1>Unable to shorten URL: user not signed in</h1>");
+    return res.redirect("/login");
+  }
   const templateVars = {
     user: user
   };
@@ -116,6 +120,10 @@ app.get("/u/:id", (req, res) => {
   try {
     //request end point "/u/:id"
     const longURL = urlDatabase[req.params.id];
+    if (!longURL) {
+      res.status(404).send("<h1>Error: URL not found</h1>");
+      return;
+    }
     //redirect to its longURL
     res.redirect(longURL);
   } catch (error) {
@@ -153,26 +161,30 @@ app.post("/urls/:id/edit", (req, res) => {
 
 
 //added route for post for in register.ejs
-app.get("/login", (req, res) => {  
-  res.render("login")
-})
+app.get("/login", (req, res) => {
+  //if the user is logged in, GET /login should redirect to GET /urls
+  if (req.cookies["user_id"]) {
+    return res.redirect("/urls");
+  }
+  res.render("login");
+});
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = userLookUp(email, users)
+  const user = userLookUp(email, users);
 
   if (user) {
-    if(user.password === password) {
+    if (user.password === password) {
       res.cookie("user_id", user.id);
       return res.redirect('/urls');
     }
-    return res.status(403).send("Error: incorrect password")
+    return res.status(403).send("Error: incorrect password");
   }
 
-  return res.status(403).send("Error: no user found with those credentials")
+  return res.status(403).send("Error: no user found with those credentials");
   //redirect the client back to the url
-})
+});
 
 app.get("/urls/index", (req, res) => {
   const user = users[req.cookies["user_id"]];
@@ -194,6 +206,10 @@ app.post("/logout", (req, res) => {
 
 //get route for user registration
 app.get("/register", (req, res) => {
+  //if the user is logged in, redirect to /urls
+  if (req.cookies["user_id"]) {
+    return res.redirect("/urls");
+  }
   res.render("register");
 });
 
