@@ -38,9 +38,25 @@ const userLookUp = function(email, users) {
   return false;
 };
 
+const urlsForUser = function(id) {
+  const urlsById = {};
+  for (const key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      urlsById[key] = urlDatabase[key];
+    }
+  }
+  return urlsById;
+};
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "h5n3se",
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "h5n3se"
+  }
 };
 
 //store users in object
@@ -69,6 +85,10 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  //tell user to log in to see their urls
+  if (!req.cookies["user_id"]) {
+    res.send("<h1>Error: please log in or register to view your URLs!</h1>");
+  }
   const user = users[req.cookies["user_id"]];
   const templateVars = { urls: urlDatabase, user: user };
 
@@ -82,7 +102,8 @@ app.get("/urls/new", (req, res) => {
     return res.redirect("/login");
   }
   const templateVars = {
-    user: user
+    user: user,
+    urls: urlDatabase
   };
   res.render("urls_new", templateVars);
 });
@@ -92,7 +113,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     user: user,
     id: req.params.id,
-    longURL: urlDatabase[req.params.id]
+    longURL: urlDatabase[req.params.id].longURL
   };
   res.render("urls_show", templateVars);
 });
@@ -105,7 +126,7 @@ app.post("/urls", (req, res) => {
     const longURL = req.body.longURL;
 
     //store the key + value in the urlDatabase
-    urlDatabase[id] = longURL;
+    urlDatabase[id].longURL = longURL;
     //redirect users to /urls/:id
     res.redirect(`/urls/${id}`);
   }
@@ -119,7 +140,7 @@ app.post("/urls", (req, res) => {
 app.get("/u/:id", (req, res) => {
   try {
     //request end point "/u/:id"
-    const longURL = urlDatabase[req.params.id];
+    const longURL = urlDatabase[req.params.id].longURL;
     if (!longURL) {
       res.status(404).send("<h1>Error: URL not found</h1>");
       return;
@@ -144,7 +165,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.get("/urls/:id/edit", (req, res) => {
   const user = users[req.cookies["user_id"]];
   const id = req.params.id;
-  const longUrl = urlDatabase[id];
+  const longUrl = urlDatabase[id].longURL;
 
   res.render("edit_form", { id: id, longUrl: longUrl, user: user });
 });
@@ -154,13 +175,13 @@ app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   const newLongUrl = req.body.Url;
 
-  urlDatabase[id] = newLongUrl;
+  urlDatabase[id].longURL = newLongUrl;
   //redirect the client back to urls
   res.redirect('/urls');
 });
 
 
-//added route for post for in register.ejs
+//add route for form in register.ejs
 app.get("/login", (req, res) => {
   //if the user is logged in, GET /login should redirect to GET /urls
   if (req.cookies["user_id"]) {
