@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
 
@@ -111,15 +112,15 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const url = urlDatabase[req.params.id].userID
+  const url = urlDatabase[req.params.id];
 
   //send error if user is not logged in
   if (req.cookies["user_id"]) {
-    res.send("Error: please login to view your URLs")
+    res.send("Error: please login to view your URLs");
   }
   //send error if user does not own url
   if (url.userID !== user.id) {
-    res.send("Error: you are trying to access URLs not belonging to this user")
+    res.send("Error: you are trying to access URLs not belonging to this user");
   }
   const templateVars = {
     user: user,
@@ -169,20 +170,20 @@ app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
 
-    // Check if the url id exists
-    if (!urlDatabase[id]) {
-      return res.status(404).send("Error: URL not found");
-    }
-  
-    // Check if the user is logged in
-    if (!req.cookies["user_id"]) {
-      return res.status(401).send("Error: You must be logged in to edit URLs");
-    }
+  // Check if the url id exists
+  if (!urlDatabase[id]) {
+    return res.status(404).send("Error: URL not found");
+  }
 
-    // Check if the user owns the url
-    if (urlDatabase[id].userID !== req.cookies["user_id"]) {
-      return res.status(403).send("Error: You do not own this URL");
-    }
+  // Check if the user is logged in
+  if (!req.cookies["user_id"]) {
+    return res.status(401).send("Error: You must be logged in to edit URLs");
+  }
+
+  // Check if the user owns the url
+  if (urlDatabase[id].userID !== req.cookies["user_id"]) {
+    return res.status(403).send("Error: You do not own this URL");
+  }
   //redirect client to /urls
   res.redirect('/urls');
 });
@@ -201,20 +202,20 @@ app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   const newLongUrl = req.body.Url;
 
-    // Check if the url id exists
-    if (!urlDatabase[id]) {
-      return res.status(404).send("Error: URL not found");
-    }
-  
-    // Check if the user is logged in
-    if (!req.cookies["user_id"]) {
-      return res.status(401).send("Error: You must be logged in to edit URLs");
-    }
-  
-    // Check if the user owns the url
-    if (urlDatabase[id].userID !== req.cookies["user_id"]) {
-      return res.status(403).send("Error: You do not own this URL");
-    }
+  // Check if the url id exists
+  if (!urlDatabase[id]) {
+    return res.status(404).send("Error: URL not found");
+  }
+
+  // Check if the user is logged in
+  if (!req.cookies["user_id"]) {
+    return res.status(401).send("Error: You must be logged in to edit URLs");
+  }
+
+  // Check if the user owns the url
+  if (urlDatabase[id].userID !== req.cookies["user_id"]) {
+    return res.status(403).send("Error: You do not own this URL");
+  }
 
   urlDatabase[id].longURL = newLongUrl;
   //redirect the client back to urls
@@ -237,7 +238,7 @@ app.post("/login", (req, res) => {
   const user = userLookUp(email, users);
 
   if (user) {
-    if (user.password === password) {
+    if (bcrypt.compareSync(password, user.password)) {
       res.cookie("user_id", user.id);
       return res.redirect('/urls');
     }
@@ -290,11 +291,15 @@ app.post("/register", (req, res) => {
   if (userLookUp(email, users)) {
     return res.status(400).send("Error: user already exists");
   }
+
+  //hash password before saving it
+  const hashedPassword = (bcrypt.hashSync(password, 10));
+
   //add the newUser and their id to our users object
   users[newUserId] = {
     id: newUserId,
     email: email,
-    password: password
+    password: hashedPassword
   };
   //add cookie for user id
   res.cookie("user_id", newUserId);
