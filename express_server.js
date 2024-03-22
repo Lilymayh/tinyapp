@@ -38,6 +38,7 @@ const userLookUp = function(email, users) {
   return false;
 };
 
+//return the urls pertaining to the specific user
 const urlsForUser = function(id) {
   const urlsById = {};
   for (const key in urlDatabase) {
@@ -110,6 +111,16 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const user = users[req.cookies["user_id"]];
+  const url = urlDatabase[req.params.id].userID
+
+  //send error if user is not logged in
+  if (req.cookies["user_id"]) {
+    res.send("Error: please login to view your URLs")
+  }
+  //send error if user does not own url
+  if (url.userID !== user.id) {
+    res.send("Error: you are trying to access URLs not belonging to this user")
+  }
   const templateVars = {
     user: user,
     id: req.params.id,
@@ -157,6 +168,21 @@ app.get("/u/:id", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
+
+    // Check if the url id exists
+    if (!urlDatabase[id]) {
+      return res.status(404).send("Error: URL not found");
+    }
+  
+    // Check if the user is logged in
+    if (!req.cookies["user_id"]) {
+      return res.status(401).send("Error: You must be logged in to edit URLs");
+    }
+
+    // Check if the user owns the url
+    if (urlDatabase[id].userID !== req.cookies["user_id"]) {
+      return res.status(403).send("Error: You do not own this URL");
+    }
   //redirect client to /urls
   res.redirect('/urls');
 });
@@ -174,6 +200,21 @@ app.get("/urls/:id/edit", (req, res) => {
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   const newLongUrl = req.body.Url;
+
+    // Check if the url id exists
+    if (!urlDatabase[id]) {
+      return res.status(404).send("Error: URL not found");
+    }
+  
+    // Check if the user is logged in
+    if (!req.cookies["user_id"]) {
+      return res.status(401).send("Error: You must be logged in to edit URLs");
+    }
+  
+    // Check if the user owns the url
+    if (urlDatabase[id].userID !== req.cookies["user_id"]) {
+      return res.status(403).send("Error: You do not own this URL");
+    }
 
   urlDatabase[id].longURL = newLongUrl;
   //redirect the client back to urls
