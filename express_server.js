@@ -102,13 +102,17 @@ app.get("/urls/:id", (req, res) => {
   const user = users[req.session.user_id];
   const url = urlDatabase[req.params.id];
 
-  //send error if user is not logged in
+  //Send 400 bad request error if user is not logged in.
   if (req.session.user_id) {
-    res.send("Error: please login to view your URLs");
+    res.send(400).send("Error: please login to view your URLs");
   }
-  //send error if user does not own url
+  //Send 404 error if url is not found.
+  if (!url) {
+    res.status(404).send("Error: URL not found")
+  }
+  //Send 400 error if user does not own url.
   if (url.userID !== user.id) {
-    res.send("Error: you are trying to access URLs not belonging to this user");
+    res.status(400).send("Error: you are trying to access URLs not belonging to this user");
   }
   const templateVars = {
     user: user,
@@ -121,12 +125,12 @@ app.get("/urls/:id", (req, res) => {
 app.get("/urls", (req, res) => {
   const user = users[req.session.user_id];
 
-  //tell user to log in to see their urls
+  //Redirect user to login before they can see their urls.
   if (!user) {
     res.redirect("/login")
   }
+  //If user is logged in, display urls
   const templateVars = { urls: urlDatabase, user: user };
-
   res.render("urls_index", templateVars);
 });
 
@@ -154,7 +158,7 @@ app.get("/u/:id", (req, res) => {
     //request end point "/u/:id"
     const longURL = urlDatabase[req.params.id].longURL;
     if (!longURL) {
-      res.status(404).send("<h1>Error: URL not found</h1>");
+      res.status(404).send("Error: URL not found");
       return;
     }
     //redirect to its longURL
@@ -165,12 +169,12 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
-//adding a post route that removes url resource: '/urls/:id/delete'
+//Add a post route that removes url resource.
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
 
-  // Check if the url id exists
+  // Check if the url id exists.
   if (!urlDatabase[id]) {
     return res.status(404).send("Error: URL not found");
   }
