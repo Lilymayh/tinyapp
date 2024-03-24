@@ -58,19 +58,6 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/urls", (req, res) => {
-  const user = users[req.session.user_id];
-  const urls = getUrlsForUser(req.session.user_id);
-
-  //Redirect user to login before they can see their urls.
-  if (!user) {
-    res.redirect("/login");
-  }
-  //If user is logged in, display urls. Use getUrlsForUser
-  const templateVars = { urls: urls, user: user };
-  res.render("urls_index", templateVars);
-});
-
 app.get("/login", (req, res) => {
   //If the user is logged in, /login should redirect to /urls.
   if (req.session.user_id) {
@@ -197,6 +184,19 @@ app.post("/urls", (req, res) => {
   };
   //Redirect users to /urls/:id.
   res.redirect(`/urls/${id}`);
+});
+
+app.get("/urls", (req, res) => {
+  const user = users[req.session.user_id];
+  const urls = getUrlsForUser(req.session.user_id);
+
+  //Redirect user to login before they can see their urls.
+  if (!user) {
+    res.redirect("/login");
+  }
+  //If user is logged in, display urls. Use getUrlsForUser
+  const templateVars = { urls: urls, user: user };
+  res.render("urls_index", templateVars);
 });
 
 //Add a post route that removes url resource.
