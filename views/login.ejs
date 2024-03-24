@@ -9,15 +9,33 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
 		integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
 	<title>TinyApp</title>
+	<style>
+		.center {
+			margin: auto;
+			text-align: center;
+			padding: 300px;
+		}
+		input[type=email],
+		input[type=password] {
+			border: 2px solid rgb(240, 130, 174);
+			display: block;
+			margin: 6px auto;
+		}
+		input[type=submit] {
+			background-color: rgb(240, 130, 174);
+		}
+	</style>
 </head>
 
 <body>
 	<%- include('partials/_header')%>
+	<div class="center">
 		<form method="POST" action="/login">
 			<input type="email" name="email" placeholder="Enter your email" id="email">
 			<input type="password" name="password" placeholder="Enter your password" id="password">
-			<button type="submit">Log in</button>
+			<button type="submit" >Log in</button>
 		</form>
+	</div>
 		<!-- Bootstrap JS -->
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
