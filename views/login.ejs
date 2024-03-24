@@ -15,27 +15,35 @@
 			text-align: center;
 			padding: 300px;
 		}
+
 		input[type=email],
 		input[type=password] {
 			border: 2px solid rgb(240, 130, 174);
 			display: block;
 			margin: 6px auto;
 		}
+
 		input[type=submit] {
 			background-color: rgb(240, 130, 174);
+		}
+
+		.btn-pink {
+			background-color: white;
+			color: rgb(255, 84, 167);
+			border: 2px rgb(255, 84, 167);
 		}
 	</style>
 </head>
 
 <body>
 	<%- include('partials/_header')%>
-	<div class="center">
-		<form method="POST" action="/login">
-			<input type="email" name="email" placeholder="Enter your email" id="email">
-			<input type="password" name="password" placeholder="Enter your password" id="password">
-			<button type="submit" >Log in</button>
-		</form>
-	</div>
+		<div class="center">
+			<form method="POST" action="/login">
+				<input type="email" name="email" placeholder="Enter your email" id="email">
+				<input type="password" name="password" placeholder="Enter your password" id="password">
+				<button type="submit" class="btn btn-pink">Log in</button>
+			</form>
+		</div>
 		<!-- Bootstrap JS -->
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

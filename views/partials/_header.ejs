@@ -2,16 +2,9 @@
   <nav class="navbar navbar-expand-md navbar-dark" style="background-color: rgb(255 84 167)">
     <a class="navbar-brand" href="/urls">TinyApp</a>
 
-  <!-- check if email is present, if yes, display a log out button instead of login. If logged out, display an email and password field and a login button -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarNavAltMarkup"
-      aria-controls="navbarNavAltMarkup"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <!-- check if email is present, if yes, display a log out button instead of login. If logged out, display an email and password field and a login button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -22,19 +15,19 @@
     </div>
 
     <div class="navbar-collapse flex-row-reverse mr-auto">
-      <% if (typeof user !== "undefined") { %>
-      <span class="navbar-text">Logged in as <%= user.email %></span> 
-      <form method="POST" action="/logout">
-        <button type="submit">Log out</button>
-      </form>
-      <% } else { %>
-        <form method="GET" action="/login">
-          <button type="submit" class="btn btn-light mr-2">Log in</button>
+      <% if (typeof user !=="undefined" ) { %>
+        <span class="navbar-text">Logged in as <%= user.email %></span>
+        <form method="POST" action="/logout">
+          <button type="submit" class="btn btn-light mr-2">Log out</button>
         </form>
-        <form method="GET" action="/register">
-          <button type="submit" class="btn btn-light mr-2">Register</button>
-        </form>
-      <% } %>
-      </div>
+        <% } else { %>
+          <form method="GET" action="/login">
+            <button type="submit" class="btn btn-light mr-2">Log in</button>
+          </form>
+          <form method="GET" action="/register">
+            <button type="submit" class="btn btn-light mr-2">Register</button>
+          </form>
+          <% } %>
+    </div>
   </nav>
 </header>

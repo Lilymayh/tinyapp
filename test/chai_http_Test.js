@@ -1,9 +1,10 @@
-
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const expect = chai.expect;
 
 chai.use(chaiHttp);
+//Middleware for testing with chai-http.
+app.use(express.urlencoded({ extended: false }));
 
 describe("Login and Access Control Test", () => {
 	it('should return 403 status code for unauthorized access to "http://localhost:8080/urls/b2xVn2"', () => {
@@ -31,8 +32,8 @@ describe("Login and Access Control Test", () => {
 			//Step 2: Expect to be redirected to http://localhost:8080/login
 			.then((res) => {
 				expect(res).to.redirectTo("/login"),
-				//Step 3: Expect status code to be 302
-				expect(res).to.have.status(302);
+					//Step 3: Expect status code to be 302
+					expect(res).to.have.status(302);
 			});
 	});
 
@@ -54,23 +55,24 @@ describe("Login and Access Control Test", () => {
 		const agent = chai.request.agent("http://localhost:8080");
 
 		return agent
-		//Step 1: Make a GET request to "http://localhost:3000/urls/NOTEXISTS"
-		.get("/urls/NOTEXISTS")
-		//Step 2: Expect the status code to be 404
-		.then((res) => {
-			expect(res).to.have.status(404)
-		})
+			//Step 1: Make a GET request to "http://localhost:3000/urls/NOTEXISTS"
+			.get("/urls/NOTEXISTS")
+			//Step 2: Expect the status code to be 404
+			.then((res) => {
+				expect(res).to.have.status(404);
+			});
 	});
 
 	it("should see an error message if the URL belong to the user", () => {
 		const agent = chai.request.agent("http://localhost:8080");
 
 		return agent
-		//Step 1: Make an unauthorized request to http://localhost:3000/urls/b2xVn2
-		.get("/urls/b2xVn2")
-		.then((res) => {
-		//Step 2: Expect the status code to be 403
-			expect(res).to.have.status(403)
-		})
+			//Step 1: Make an unauthorized request to http://localhost:3000/urls/b2xVn2
+			.get("/urls/b2xVn2")
+			.then((res) => {
+				//Step 2: Expect the status code to be 403
+				expect(res).to.have.status(403);
+			});
 	});
 });
+

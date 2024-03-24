@@ -1,3 +1,5 @@
+const urlDatabase = require('./express_server');
+
 //Export function for use in express_server.js.
 const getUserByEmail = function(email, users) {
   const userList = Object.values(users);
@@ -27,4 +29,15 @@ const generateRandomString = function() {
   return newStr;
 };
 
-module.exports = { getUserByEmail, generateRandomString };
+//return the urls pertaining to the specific user
+const getUrlsForUser = function(id) {
+  const urlsById = {};
+  for (const key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      urlsById[key] = urlDatabase[key];
+    }
+  }
+  return urlsById;
+};
+
+module.exports = { getUserByEmail, generateRandomString, getUrlsForUser };
