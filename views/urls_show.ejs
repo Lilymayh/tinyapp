@@ -9,17 +9,18 @@
 </head>
 
 <body>
-  <%- include('partials/_header')%>
+  <%- include('partials/_header') %>
     <!-- new form tag that submits an updated longURL -->
-    <form method="POST" action="/urls/<%= id% %>/edit">
-      <div class="form-group">
-        <input style="width: 100%" type="input" name="longURL" id="longURL" placeholder="Enter long URL">
-      </div>
-      <button type="submit" class="btn btn-primary">Update URL</button>
-    </form>
     <div class="card text-center">
-      <div class="card-header"></div>
+      <div class="card-header">
+      </div>
       <div class="card-body">
+        <form class="form-inline" method="POST" action="/urls/<%= id %>/edit">
+          <div class="form-group mb-2" style="text-align: center; margin: 1em auto">
+            <input style="width: 100%" type="input" name="longURL" id="longURL" placeholder="Enter long URL">
+            <button type="submit" class="btn btn-primary" style="text-align: center; margin: 1em auto">Update URL</button>
+          </div>
+        </form>
         <h5 class="card-title">TinyURL for: <%= longURL %>
         </h5>
         <p class="card-text">

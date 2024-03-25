@@ -30,10 +30,10 @@ const generateRandomString = function() {
 };
 
 //return the urls pertaining to the specific user
-const getUrlsForUser = function(id) {
+const getUrlsForUser = function(userId, urlDatabase) {
   const urlsById = {};
   for (const key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
+    if (urlDatabase[key].userID === userId) {
       urlsById[key] = urlDatabase[key];
     }
   }
